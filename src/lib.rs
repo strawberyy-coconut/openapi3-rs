@@ -19,7 +19,7 @@
 //! ```rust
 //! use openapi3_rs::OpenAPI;
 //!
-//! let json = r#"{"openapi":"3.1.0","info":{"title":"Demo","version":"1.0"}}"#;
+//! let json = r#"{"openapi":"3.2.0","info":{"title":"Demo","version":"1.0"}}"#;
 //! let api: OpenAPI = serde_json::from_str(json).unwrap();
 //! println!("API: {} v{}", api.info.title, api.info.version);
 //! ```

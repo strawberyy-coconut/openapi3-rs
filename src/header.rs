@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::MediaType;
 use crate::extensions::Extensions;
+use crate::parameter::Style;
 use crate::reference::RefOr;
 use crate::schema::Schema;
 
@@ -33,9 +34,10 @@ pub struct Header {
     pub deprecated: Option<bool>,
 
     /// Describes how the header value will be serialized.
-    /// The default (and only legal value for headers) is `"simple"`.
+    /// The default is `"simple"`. Per §4.21.1.2, `style` MUST be limited to
+    /// `"simple"` for headers; any other value is invalid.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub style: Option<String>,
+    pub style: Option<Style>,
 
     /// When `true`, header values of type array/object generate a single header
     /// with comma-separated values. Default is `false`.

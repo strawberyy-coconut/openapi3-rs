@@ -10,11 +10,15 @@ use serde_json::Value;
 ///
 /// # Serde behavior
 ///
-/// When used with `#[serde(flatten)]`, this captures all `x-*` fields from the
-/// parent object during deserialization and writes them back during serialization.
+/// When used with `#[serde(flatten)]`, serde captures all unrecognized keys from
+/// the parent object. Call [`validate_keys`](Self::validate_keys) to ensure only
+/// `x-`-prefixed keys are present — this helps catch misspelled field names.
+///
+/// During serialization, all extensions are written back with their keys intact.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Extensions {
-    /// Extension key-value pairs. Keys must start with `x-`.
+    /// Extension key-value pairs. Per spec §5, keys MUST start with `x-`.
+    /// The reserved prefixes `x-oai-` and `x-oas-` are for OpenAPI Initiative use.
     #[serde(flatten)]
     pub extensions: IndexMap<String, Value>,
 }
@@ -44,5 +48,26 @@ impl Extensions {
     /// Returns true if there are no extensions.
     pub fn is_empty(&self) -> bool {
         self.extensions.is_empty()
+    }
+
+    /// Return all keys that are NOT valid extension keys (don't start with `x-`).
+    ///
+    /// These are typically misspelled field names that serde couldn't match to
+    /// any struct field. Call this after deserialization to detect them.
+    ///
+    /// # Example
+    /// ```ignore
+    /// let api: OpenAPI = serde_json::from_str(json_str)?;
+    /// let bad_keys = api.extensions.validate_keys();
+    /// if !bad_keys.is_empty() {
+    ///     eprintln!("Warning: unrecognized non-extension keys: {:?}", bad_keys);
+    /// }
+    /// ```
+    pub fn validate_keys(&self) -> Vec<&str> {
+        self.extensions
+            .keys()
+            .filter(|k| !k.starts_with("x-"))
+            .map(|k| k.as_str())
+            .collect()
     }
 }

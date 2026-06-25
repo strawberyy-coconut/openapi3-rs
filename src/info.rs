@@ -66,6 +66,30 @@ impl Info {
             extensions: Extensions::default(),
         }
     }
+
+    /// Set the summary (builder style).
+    pub fn with_summary(mut self, summary: impl Into<String>) -> Self {
+        self.summary = Some(summary.into());
+        self
+    }
+
+    /// Set the description (builder style).
+    pub fn with_description(mut self, desc: impl Into<String>) -> Self {
+        self.description = Some(desc.into());
+        self
+    }
+
+    /// Set the contact (builder style).
+    pub fn with_contact(mut self, contact: Contact) -> Self {
+        self.contact = Some(contact);
+        self
+    }
+
+    /// Set the license (builder style).
+    pub fn with_license(mut self, license: License) -> Self {
+        self.license = Some(license);
+        self
+    }
 }
 
 impl Default for Info {
@@ -87,14 +111,6 @@ impl Default for Info {
 /// as defined in §4.3 of the OpenAPI 3.2 specification.
 ///
 /// Contact information for the exposed API.
-///
-/// # Fields
-///
-/// | Field | Type | Description |
-/// |---|---|---|
-/// | `name` | `string` | The identifying name of the contact person/organization. |
-/// | `url` | `string` | The URI for the contact information. |
-/// | `email` | `string` | The email address of the contact person/organization. |
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Contact {
     /// The identifying name of the contact person/organization.
@@ -106,12 +122,38 @@ pub struct Contact {
     pub url: Option<String>,
 
     /// The email address of the contact person/organization.
+    /// MUST be in the form of an email address.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
 
     /// Specification Extensions (`x-*` keys).
     #[serde(flatten)]
     pub extensions: Extensions,
+}
+
+impl Contact {
+    /// Create a new empty Contact.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Set the name (builder style).
+    pub fn with_name(mut self, name: impl Into<String>) -> Self {
+        self.name = Some(name.into());
+        self
+    }
+
+    /// Set the URL (builder style).
+    pub fn with_url(mut self, url: impl Into<String>) -> Self {
+        self.url = Some(url.into());
+        self
+    }
+
+    /// Set the email (builder style).
+    pub fn with_email(mut self, email: impl Into<String>) -> Self {
+        self.email = Some(email.into());
+        self
+    }
 }
 
 impl Default for Contact {
@@ -128,26 +170,20 @@ impl Default for Contact {
 /// A [License Object](https://spec.openapis.org/oas/latest.html#license-object)
 /// as defined in §4.4 of the OpenAPI 3.2 specification.
 ///
-/// License information for the exposed API. The `identifier` and `url` fields
-/// are mutually exclusive.
+/// License information for the exposed API.
 ///
-/// # Fields
-///
-/// | Field | Type | Description |
-/// |---|---|---|
-/// | `name` | `string` | **REQUIRED.** The license name used for the API. |
-/// | `identifier` | `string` | An SPDX license expression. Mutually exclusive with `url`. |
-/// | `url` | `string` | A URI for the license. Mutually exclusive with `identifier`. |
+/// The `identifier` and `url` fields are mutually exclusive.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
 pub struct License {
-    /// The license name used for the API.
+    /// **REQUIRED.** The license name used for the API.
     pub name: String,
 
     /// An SPDX license expression. Mutually exclusive with `url`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub identifier: Option<String>,
 
-    /// A URI for the license used for the API. Mutually exclusive with `identifier`.
+    /// A URI for the license. Mutually exclusive with `identifier`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
 
@@ -165,6 +201,18 @@ impl License {
             url: None,
             extensions: Extensions::default(),
         }
+    }
+
+    /// Set the SPDX identifier (builder style).
+    pub fn with_identifier(mut self, id: impl Into<String>) -> Self {
+        self.identifier = Some(id.into());
+        self
+    }
+
+    /// Set the URL (builder style).
+    pub fn with_url(mut self, url: impl Into<String>) -> Self {
+        self.url = Some(url.into());
+        self
     }
 }
 

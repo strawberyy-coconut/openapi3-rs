@@ -21,9 +21,15 @@ pub enum XmlNodeType {
     None,
 }
 
+/// The default node type per the spec is context-dependent:
+/// - `none` when `$ref`, `$dynamicRef`, or `type: "array"` is present
+/// - `element` otherwise
+///
+/// We default to `None` as the most general case; callers should
+/// override based on their schema context.
 impl Default for XmlNodeType {
     fn default() -> Self {
-        Self::Element
+        Self::None
     }
 }
 

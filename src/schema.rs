@@ -65,6 +65,46 @@ pub struct SchemaObject {
     pub schema_data: JsonMap<String, Value>,
 }
 
+impl SchemaObject {
+    /// Returns the JSON Schema `type` field, if present.
+    pub fn schema_type(&self) -> Option<&str> {
+        self.schema_data.get("type").and_then(|v| v.as_str())
+    }
+
+    /// Returns the JSON Schema `type` field as a list, if it's an array.
+    pub fn schema_type_list(&self) -> Option<Vec<&str>> {
+        self.schema_data.get("type")?.as_array()?
+            .iter()
+            .map(|v| v.as_str())
+            .collect()
+    }
+
+    /// Returns true if this schema has a `$ref`.
+    pub fn has_ref(&self) -> bool {
+        self.schema_data.contains_key("$ref")
+    }
+
+    /// Get the `$ref` value, if present.
+    pub fn ref_path(&self) -> Option<&str> {
+        self.schema_data.get("$ref").and_then(|v| v.as_str())
+    }
+
+    /// Returns the `$schema` dialect URI, if present.
+    pub fn schema_dialect(&self) -> Option<&str> {
+        self.schema_data.get("$schema").and_then(|v| v.as_str())
+    }
+
+    /// Returns the `format` keyword value, if present.
+    pub fn format(&self) -> Option<&str> {
+        self.schema_data.get("format").and_then(|v| v.as_str())
+    }
+
+    /// Returns the `description` keyword value, if present.
+    pub fn description(&self) -> Option<&str> {
+        self.schema_data.get("description").and_then(|v| v.as_str())
+    }
+}
+
 impl Default for SchemaObject {
     fn default() -> Self {
         Self {
@@ -84,6 +124,18 @@ pub enum NewValidatedError {
     ValidationError(#[from] jsonschema::ValidationError<'static>),
     #[error("Serde error: {0}")]
     SerdeError(#[from] serde_json::Error)
+}
+
+impl From<SchemaObject> for Schema {
+    fn from(obj: SchemaObject) -> Self {
+        Self::Object(obj)
+    }
+}
+
+impl From<bool> for Schema {
+    fn from(b: bool) -> Self {
+        Self::Bool(b)
+    }
 }
 
 impl Schema {

@@ -34,6 +34,7 @@ use crate::tag::Tag;
 /// | `tags` | `[Tag]` | A list of tags used by the OAD with additional metadata. |
 /// | `external_docs` | `ExternalDocumentation` | Additional external documentation. |
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "builder", derive(derive_builder::Builder))]
 #[serde(rename_all = "camelCase")]
 pub struct OpenAPI {
     /// **REQUIRED.** The version number of the OpenAPI Specification being used.
