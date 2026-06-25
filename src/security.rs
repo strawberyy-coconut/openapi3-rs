@@ -3,6 +3,35 @@ use serde::{Deserialize, Serialize};
 
 use crate::extensions::Extensions;
 
+/// The type of a [Security Scheme Object](https://spec.openapis.org/oas/latest.html#security-scheme-object)
+/// as defined in §4.27.1 of the OpenAPI 3.2 specification.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub enum SecuritySchemeType {
+    /// API key-based authentication.
+    ApiKey,
+    /// HTTP authentication (e.g., Basic, Bearer).
+    Http,
+    /// Mutual TLS certificate authentication.
+    MutualTLS,
+    /// OAuth 2.0 authentication.
+    Oauth2,
+    /// OpenID Connect authentication.
+    OpenIdConnect,
+}
+
+/// The location of an API key, as defined in §4.27.1 of the OpenAPI 3.2 spec.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ApiKeyLocation {
+    /// API key in the query string.
+    Query,
+    /// API key in a request header.
+    Header,
+    /// API key in a cookie.
+    Cookie,
+}
+
 /// A [Security Scheme Object](https://spec.openapis.org/oas/latest.html#security-scheme-object)
 /// as defined in §4.27 of the OpenAPI 3.2 specification.
 ///
@@ -15,27 +44,12 @@ use crate::extensions::Extensions;
 /// - `oauth2`: `flows` (and optionally `oauth2_metadata_url` in 3.2)
 /// - `openIdConnect`: `open_id_connect_url`
 /// - `mutualTLS`: no additional required fields
-///
-/// # Fields
-///
-/// | Field | Type | Applies to | Description |
-/// |---|---|---|---|
-/// | `type` | `string` | All | **REQUIRED.** `apiKey`, `http`, `mutualTLS`, `oauth2`, or `openIdConnect`. |
-/// | `description` | `string` | All | A description for the security scheme. Supports CommonMark. |
-/// | `name` | `string` | `apiKey` | **REQUIRED.** The name of the header, query, or cookie parameter. |
-/// | `in` | `string` | `apiKey` | **REQUIRED.** The location: `query`, `header`, or `cookie`. |
-/// | `scheme` | `string` | `http` | **REQUIRED.** The HTTP auth scheme (e.g., `bearer`, `basic`). |
-/// | `bearer_format` | `string` | `http` (`bearer`) | A hint for the bearer token format (e.g., `JWT`). |
-/// | `flows` | `OAuthFlows` | `oauth2` | **REQUIRED.** Configuration for the OAuth2 flow types. |
-/// | `open_id_connect_url` | `string` | `openIdConnect` | **REQUIRED.** Well-known OpenID Connect discovery URL. |
-/// | `oauth2_metadata_url` | `string` | `oauth2` | URL to the OAuth2 authorization server metadata (3.2). |
-/// | `deprecated` | `boolean` | All | Declares this security scheme to be deprecated (3.2). |
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityScheme {
-    /// The type of the security scheme.
+    /// **REQUIRED.** The type of the security scheme.
     #[serde(rename = "type")]
-    pub scheme_type: String,
+    pub scheme_type: SecuritySchemeType,
 
     /// A description for the security scheme. Supports CommonMark markdown.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -47,7 +61,7 @@ pub struct SecurityScheme {
 
     /// The location of the API key (for `apiKey` type): `query`, `header`, or `cookie`.
     #[serde(rename = "in", skip_serializing_if = "Option::is_none")]
-    pub location: Option<String>,
+    pub location: Option<ApiKeyLocation>,
 
     /// The HTTP Authentication scheme name (for `http` type).
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -82,7 +96,7 @@ pub struct SecurityScheme {
 impl Default for SecurityScheme {
     fn default() -> Self {
         Self {
-            scheme_type: String::new(),
+            scheme_type: SecuritySchemeType::ApiKey,
             description: None,
             name: None,
             location: None,
@@ -184,9 +198,8 @@ pub struct OAuthFlow {
     pub refresh_url: Option<String>,
 
     /// The available scopes for the OAuth2 security scheme.
-    /// A map between the scope name and a short description.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub scopes: Option<IndexMap<String, String>>,
+    /// A map between the scope name and a short description. **REQUIRED.** May be empty.
+    pub scopes: IndexMap<String, String>,
 
     /// Specification Extensions (`x-*` keys).
     #[serde(flatten)]
@@ -200,7 +213,7 @@ impl Default for OAuthFlow {
             device_authorization_url: None,
             token_url: None,
             refresh_url: None,
-            scopes: None,
+            scopes: IndexMap::new(),
             extensions: Extensions::default(),
         }
     }
@@ -225,7 +238,7 @@ mod tests {
     fn test_api_key_scheme() {
         let json = r#"{"type": "apiKey", "name": "X-API-Key", "in": "header"}"#;
         let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
-        assert_eq!(scheme.scheme_type, "apiKey");
+        assert_eq!(scheme.scheme_type, SecuritySchemeType::ApiKey);
         assert_eq!(scheme.name.as_deref(), Some("X-API-Key"));
     }
 

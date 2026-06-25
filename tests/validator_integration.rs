@@ -254,40 +254,40 @@ fn build_full_coverage() -> OpenAPI {
     components.security_schemes = Some({
         let mut s = IndexMap::new();
         s.insert("api_key".into(), RefOr::Item(SecurityScheme {
-            scheme_type: "apiKey".into(),
+            scheme_type: SecuritySchemeType::ApiKey,
             name: Some("X-API-Key".into()),
-            location: Some("header".into()),
+            location: Some(ApiKeyLocation::Header),
             description: Some("API Key authentication".into()),
             ..Default::default()
         }));
         s.insert("petstore_oauth".into(), RefOr::Item(SecurityScheme {
-            scheme_type: "oauth2".into(),
+            scheme_type: SecuritySchemeType::Oauth2,
             description: Some("OAuth2 authentication".into()),
             flows: Some(OAuthFlows {
                 implicit: Some(OAuthFlow {
                     authorization_url: Some("https://example.com/oauth/dialog".into()),
-                    scopes: Some({
+                    scopes: {
                         let mut sc = IndexMap::new();
                         sc.insert("write:pets".into(), "modify pets".into());
                         sc.insert("read:pets".into(), "read pets".into());
                         sc
-                    }),
+                    },
                     ..Default::default()
                 }),
                 authorization_code: Some(OAuthFlow {
                     authorization_url: Some("https://example.com/oauth/dialog".into()),
                     token_url: Some("https://example.com/oauth/token".into()),
-                    scopes: Some({
+                    scopes: {
                         let mut sc = IndexMap::new();
                         sc.insert("admin".into(), "full access".into());
                         sc
-                    }),
+                    },
                     ..Default::default()
                 }),
                 device_authorization: Some(OAuthFlow {
                     device_authorization_url: Some("https://example.com/oauth/device".into()),
                     token_url: Some("https://example.com/oauth/token".into()),
-                    scopes: Some(IndexMap::new()),
+                    scopes: IndexMap::new(),
                     ..Default::default()
                 }),
                 ..Default::default()

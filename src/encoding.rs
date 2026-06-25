@@ -27,7 +27,7 @@ pub struct Encoding {
     /// Ignored if the media type is not `application/x-www-form-urlencoded`
     /// or `multipart/form-data`.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub style: Option<String>,
+    pub style: Option<crate::parameter::Style>,
 
     /// When `true`, array/object values generate separate parameters.
     /// For `style: "form"`, default is `true`. For all others, default is `false`.
