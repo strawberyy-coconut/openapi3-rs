@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::header::Header;
 use crate::media_type::MediaType;
 use crate::reference::RefOr;
@@ -44,6 +45,10 @@ pub struct Response {
     /// The key is a short name for the link.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub links: Option<IndexMap<String, RefOr<crate::link::Link>>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for Response {
@@ -54,6 +59,7 @@ impl Default for Response {
             headers: None,
             content: None,
             links: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -67,6 +73,7 @@ impl Response {
             headers: None,
             content: None,
             links: None,
+            extensions: Extensions::default(),
         }
     }
 }

@@ -101,12 +101,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 name: Some("API Support".into()),
                 url: None,
                 email: Some("support@example.com".into()),
+                ..Default::default()
             }),
             license: Some(License {
                 name: "Apache 2.0".into(),
                 identifier: None,
                 url: Some("https://www.apache.org/licenses/LICENSE-2.0.html".into()),
+                ..Default::default()
             }),
+            ..Default::default()
         },
         servers: Some(vec![Server {
             url: "https://api.example.com/v1".into(),

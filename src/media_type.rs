@@ -2,6 +2,7 @@ use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 use crate::encoding::Encoding;
+use crate::extensions::Extensions;
 use crate::reference::RefOr;
 use crate::schema::Schema;
 
@@ -48,6 +49,10 @@ pub struct MediaType {
     /// Only applies to `multipart/*`. MUST NOT be present if `encoding` is present.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub item_encoding: Option<Encoding>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl MediaType {
@@ -61,6 +66,7 @@ impl MediaType {
             encoding: None,
             prefix_encoding: None,
             item_encoding: None,
+            extensions: Extensions::default(),
         }
     }
 }

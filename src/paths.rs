@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::external_docs::ExternalDocumentation;
 use crate::parameter::Parameter;
 use crate::reference::RefOr;
@@ -115,6 +116,10 @@ pub struct PathItem {
     /// be removed there.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parameters: Option<Vec<RefOr<Parameter>>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl PathItem {
@@ -136,6 +141,7 @@ impl PathItem {
             additional_operations: None,
             servers: None,
             parameters: None,
+            extensions: Extensions::default(),
         }
     }
 
@@ -244,6 +250,10 @@ pub struct Operation {
     /// Overrides Path Item or OpenAPI Object level servers.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub servers: Option<Vec<Server>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for Operation {
@@ -261,6 +271,7 @@ impl Default for Operation {
             deprecated: None,
             security: None,
             servers: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -281,6 +292,7 @@ impl Operation {
             deprecated: None,
             security: None,
             servers: None,
+            extensions: Extensions::default(),
         }
     }
 }

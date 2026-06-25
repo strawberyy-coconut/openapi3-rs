@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
+
 /// An [Info Object](https://spec.openapis.org/oas/latest.html#info-object)
 /// as defined in §4.2 of the OpenAPI 3.2 specification.
 ///
@@ -44,6 +46,10 @@ pub struct Info {
 
     /// The version of the OpenAPI document (distinct from the spec version).
     pub version: String,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Info {
@@ -57,6 +63,22 @@ impl Info {
             terms_of_service: None,
             contact: None,
             license: None,
+            extensions: Extensions::default(),
+        }
+    }
+}
+
+impl Default for Info {
+    fn default() -> Self {
+        Self {
+            title: String::new(),
+            version: String::new(),
+            summary: None,
+            description: None,
+            terms_of_service: None,
+            contact: None,
+            license: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -86,6 +108,21 @@ pub struct Contact {
     /// The email address of the contact person/organization.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
+}
+
+impl Default for Contact {
+    fn default() -> Self {
+        Self {
+            name: None,
+            url: None,
+            email: None,
+            extensions: Extensions::default(),
+        }
+    }
 }
 
 /// A [License Object](https://spec.openapis.org/oas/latest.html#license-object)
@@ -113,6 +150,10 @@ pub struct License {
     /// A URI for the license used for the API. Mutually exclusive with `identifier`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl License {
@@ -122,6 +163,18 @@ impl License {
             name: name.into(),
             identifier: None,
             url: None,
+            extensions: Extensions::default(),
+        }
+    }
+}
+
+impl Default for License {
+    fn default() -> Self {
+        Self {
+            name: String::new(),
+            identifier: None,
+            url: None,
+            extensions: Extensions::default(),
         }
     }
 }

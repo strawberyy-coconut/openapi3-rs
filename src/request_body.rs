@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::media_type::MediaType;
 use crate::reference::RefOr;
 
@@ -30,6 +31,10 @@ pub struct RequestBody {
     /// Whether the request body is required in the request. Default is `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required: Option<bool>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl RequestBody {
@@ -39,6 +44,7 @@ impl RequestBody {
             content,
             description: None,
             required: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -49,6 +55,7 @@ impl Default for RequestBody {
             description: None,
             content: IndexMap::new(),
             required: None,
+            extensions: Extensions::default(),
         }
     }
 }

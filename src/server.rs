@@ -1,6 +1,8 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
+
 /// A [Server Object](https://spec.openapis.org/oas/latest.html#server-object)
 /// as defined in §4.5 of the OpenAPI 3.2 specification.
 ///
@@ -31,6 +33,10 @@ pub struct Server {
     /// A map between a variable name and its value for URL template substitution.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub variables: Option<IndexMap<String, ServerVariable>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for Server {
@@ -40,6 +46,7 @@ impl Default for Server {
             description: None,
             name: None,
             variables: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -52,6 +59,7 @@ impl Server {
             description: None,
             name: None,
             variables: None,
+            extensions: Extensions::default(),
         }
     }
 
@@ -86,6 +94,10 @@ pub struct ServerVariable {
     /// An optional description for the server variable. Supports CommonMark markdown.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl ServerVariable {
@@ -95,6 +107,18 @@ impl ServerVariable {
             default: default.into(),
             r#enum: None,
             description: None,
+            extensions: Extensions::default(),
+        }
+    }
+}
+
+impl Default for ServerVariable {
+    fn default() -> Self {
+        Self {
+            default: String::new(),
+            r#enum: None,
+            description: None,
+            extensions: Extensions::default(),
         }
     }
 }

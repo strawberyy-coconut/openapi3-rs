@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
+
 /// Node types for the XML Object, as defined in §4.26.2 of the OpenAPI 3.2 specification.
 ///
 /// Each Schema Object with XML metadata describes a particular type of DOM node.
@@ -68,4 +70,22 @@ pub struct XML {
     /// The DOM node type. One of `element`, `attribute`, `text`, `cdata`, or `none`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub node_type: Option<XmlNodeType>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
+}
+
+impl Default for XML {
+    fn default() -> Self {
+        Self {
+            name: None,
+            namespace: None,
+            prefix: None,
+            attribute: None,
+            wrapped: None,
+            node_type: None,
+            extensions: Extensions::default(),
+        }
+    }
 }

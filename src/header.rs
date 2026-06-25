@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::reference::RefOr;
 use crate::schema::Schema;
 
@@ -58,6 +59,10 @@ pub struct Header {
     /// Mutually exclusive with `schema`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub content: Option<IndexMap<String, crate::media_type::MediaType>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for Header {
@@ -72,6 +77,7 @@ impl Default for Header {
             example: None,
             examples: None,
             content: None,
+            extensions: Extensions::default(),
         }
     }
 }

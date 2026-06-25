@@ -1,6 +1,8 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
+
 /// A [Discriminator Object](https://spec.openapis.org/oas/latest.html#discriminator-object)
 /// as defined in §4.25 of the OpenAPI 3.2 specification.
 ///
@@ -30,6 +32,10 @@ pub struct Discriminator {
     /// is not present or contains an unmapped value. Added in OpenAPI 3.2.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default_mapping: Option<String>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Discriminator {
@@ -39,6 +45,18 @@ impl Discriminator {
             property_name: property_name.into(),
             mapping: None,
             default_mapping: None,
+            extensions: Extensions::default(),
+        }
+    }
+}
+
+impl Default for Discriminator {
+    fn default() -> Self {
+        Self {
+            property_name: String::new(),
+            mapping: None,
+            default_mapping: None,
+            extensions: Extensions::default(),
         }
     }
 }

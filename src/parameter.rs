@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::reference::RefOr;
 use crate::schema::Schema;
 
@@ -110,6 +111,32 @@ pub struct Parameter {
     /// Mutually exclusive with `schema`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub content: Option<IndexMap<String, crate::media_type::MediaType>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
+}
+
+impl Parameter {
+    /// Create a new Parameter with the required `name` and `location`.
+    pub fn new(name: impl Into<String>, location: ParameterIn) -> Self {
+        Self {
+            name: name.into(),
+            location,
+            description: None,
+            required: None,
+            deprecated: None,
+            allow_empty_value: None,
+            style: None,
+            explode: None,
+            allow_reserved: None,
+            schema: None,
+            example: None,
+            examples: None,
+            content: None,
+            extensions: Extensions::default(),
+        }
+    }
 }
 
 impl Default for Parameter {
@@ -128,6 +155,7 @@ impl Default for Parameter {
             example: None,
             examples: None,
             content: None,
+            extensions: Extensions::default(),
         }
     }
 }

@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
+
 /// An [Example Object](https://spec.openapis.org/oas/latest.html#example-object)
 /// as defined in §4.19 of the OpenAPI 3.2 specification.
 ///
@@ -41,6 +43,10 @@ pub struct Example {
     /// Mutually exclusive with `external_value`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub value: Option<serde_json::Value>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Example {
@@ -53,6 +59,21 @@ impl Example {
             data_value: None,
             serialized_value: None,
             external_value: None,
+            extensions: Extensions::default(),
+        }
+    }
+}
+
+impl Default for Example {
+    fn default() -> Self {
+        Self {
+            summary: None,
+            description: None,
+            data_value: None,
+            serialized_value: None,
+            external_value: None,
+            value: None,
+            extensions: Extensions::default(),
         }
     }
 }

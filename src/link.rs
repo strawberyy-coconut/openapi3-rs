@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::server::Server;
 
 /// A [Link Object](https://spec.openapis.org/oas/latest.html#link-object)
@@ -42,6 +43,10 @@ pub struct Link {
     /// A server object to be used by the target operation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub server: Option<Server>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for Link {
@@ -53,6 +58,7 @@ impl Default for Link {
             request_body: None,
             description: None,
             server: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -67,6 +73,7 @@ impl Link {
             request_body: None,
             description: None,
             server: None,
+            extensions: Extensions::default(),
         }
     }
 
@@ -79,6 +86,7 @@ impl Link {
             request_body: None,
             description: None,
             server: None,
+            extensions: Extensions::default(),
         }
     }
 }

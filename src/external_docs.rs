@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
+
 /// An [External Documentation Object](https://spec.openapis.org/oas/latest.html#external-documentation-object)
 /// as defined in §4.11 of the OpenAPI 3.2 specification.
 ///
@@ -19,6 +21,10 @@ pub struct ExternalDocumentation {
 
     /// The URI for the target documentation. MUST be a valid URI.
     pub url: String,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl ExternalDocumentation {
@@ -27,6 +33,17 @@ impl ExternalDocumentation {
         Self {
             url: url.into(),
             description: None,
+            extensions: Extensions::default(),
+        }
+    }
+}
+
+impl Default for ExternalDocumentation {
+    fn default() -> Self {
+        Self {
+            url: String::new(),
+            description: None,
+            extensions: Extensions::default(),
         }
     }
 }

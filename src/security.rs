@@ -1,6 +1,8 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
+
 /// A [Security Scheme Object](https://spec.openapis.org/oas/latest.html#security-scheme-object)
 /// as defined in §4.27 of the OpenAPI 3.2 specification.
 ///
@@ -71,6 +73,10 @@ pub struct SecurityScheme {
     /// Consumers SHOULD refrain from usage.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub deprecated: Option<bool>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for SecurityScheme {
@@ -86,6 +92,7 @@ impl Default for SecurityScheme {
             open_id_connect_url: None,
             oauth2_metadata_url: None,
             deprecated: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -126,6 +133,10 @@ pub struct OAuthFlows {
     /// Configuration for the OAuth Device Authorization flow (added in OAS 3.2).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub device_authorization: Option<OAuthFlow>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for OAuthFlows {
@@ -136,6 +147,7 @@ impl Default for OAuthFlows {
             client_credentials: None,
             authorization_code: None,
             device_authorization: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -175,6 +187,10 @@ pub struct OAuthFlow {
     /// A map between the scope name and a short description.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub scopes: Option<IndexMap<String, String>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for OAuthFlow {
@@ -185,6 +201,7 @@ impl Default for OAuthFlow {
             token_url: None,
             refresh_url: None,
             scopes: None,
+            extensions: Extensions::default(),
         }
     }
 }

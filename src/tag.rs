@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::external_docs::ExternalDocumentation;
 
 /// A [Tag Object](https://spec.openapis.org/oas/latest.html#tag-object)
@@ -46,6 +47,10 @@ pub struct Tag {
     /// Common values: `nav`, `badge`, `audience`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for Tag {
@@ -57,6 +62,7 @@ impl Default for Tag {
             external_docs: None,
             parent: None,
             kind: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -71,6 +77,7 @@ impl Tag {
             external_docs: None,
             parent: None,
             kind: None,
+            extensions: Extensions::default(),
         }
     }
 }

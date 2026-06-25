@@ -93,6 +93,7 @@ fn build_full_coverage() -> OpenAPI {
                 m
             }),
             default_mapping: Some("GenericPet".into()),
+            ..Default::default()
         }),
         xml: Some(XML {
             name: Some("Pet".into()),
@@ -101,10 +102,12 @@ fn build_full_coverage() -> OpenAPI {
             attribute: None,
             wrapped: None,
             node_type: Some(XmlNodeType::Element),
+            ..Default::default()
         }),
         external_docs: Some(ExternalDocumentation {
             description: Some("More about Pet".into()),
             url: "https://example.com/docs/pet".into(),
+            ..Default::default()
         }),
         example: Some(serde_json::json!({"id": 1, "name": "Fluffy"})),
         schema_data: {
@@ -197,6 +200,7 @@ fn build_full_coverage() -> OpenAPI {
             external_value: None,
             value: None,
             description: None,
+            ..Default::default()
         }));
         e
     });
@@ -222,6 +226,7 @@ fn build_full_coverage() -> OpenAPI {
                 });
                 c
             },
+            ..Default::default()
         }));
         b
     });
@@ -613,6 +618,7 @@ fn build_full_coverage() -> OpenAPI {
             description: Some("Pet-specific server".into()),
             name: Some("petServer".into()),
             variables: None,
+            ..Default::default()
         }]),
         ..Default::default()
     }));
@@ -658,6 +664,7 @@ fn build_full_coverage() -> OpenAPI {
             external_docs: Some(ExternalDocumentation {
                 url: "https://example.com/docs/get-pet".into(),
                 description: None,
+                ..Default::default()
             }),
             responses: Responses {
                 // reference to reusable response
@@ -903,13 +910,16 @@ fn build_full_coverage() -> OpenAPI {
                 name: Some("Test Support".into()),
                 url: Some("https://example.com/support".into()),
                 email: Some("test@example.com".into()),
+                ..Default::default()
             }),
             license: Some(License {
                 name: "MIT".into(),
                 identifier: Some("MIT".into()),
                 url: Some("https://opensource.org/licenses/MIT".into()),
+                ..Default::default()
             }),
             version: "1.0.0".into(),
+            ..Default::default()
         },
         self_uri: Some("https://example.com/api/openapi.json".into()),
         json_schema_dialect: Some("https://spec.openapis.org/oas/3.1/dialect/base".into()),
@@ -924,9 +934,11 @@ fn build_full_coverage() -> OpenAPI {
                         default: "api".into(),
                         r#enum: Some(vec!["api".into(), "staging".into(), "dev".into()]),
                         description: Some("Deployment environment".into()),
+                        ..Default::default()
                     });
                     v
                 }),
+                ..Default::default()
             },
             Server::default_local(),
         ]),
@@ -985,9 +997,11 @@ fn build_full_coverage() -> OpenAPI {
                 external_docs: Some(ExternalDocumentation {
                     description: Some("Pet docs".into()),
                     url: "https://example.com/docs/pets".into(),
+                    ..Default::default()
                 }),
                 parent: None,
                 kind: Some("nav".into()),
+                ..Default::default()
             },
             Tag {
                 name: "internal".into(),
@@ -999,7 +1013,9 @@ fn build_full_coverage() -> OpenAPI {
         external_docs: Some(ExternalDocumentation {
             description: Some("Full API documentation".into()),
             url: "https://example.com/docs".into(),
+            ..Default::default()
         }),
+        ..Default::default()
     }
 }
 
@@ -1305,6 +1321,7 @@ fn build_petstore() -> OpenAPI {
                     });
                     c
                 },
+                ..Default::default()
             })),
             responses: Responses {
                 responses: {
@@ -1367,13 +1384,16 @@ fn build_petstore() -> OpenAPI {
                 name: Some("API Support".into()),
                 url: Some("https://www.example.com/support".into()),
                 email: Some("support@example.com".into()),
+                ..Default::default()
             }),
             license: Some(License {
                 name: "Apache 2.0".into(),
                 identifier: Some("Apache-2.0".into()),
                 url: None,
+                ..Default::default()
             }),
             version: "1.0.0".into(),
+            ..Default::default()
         },
         servers: Some(vec![Server {
             url: "https://petstore.example.com/v1".into(),

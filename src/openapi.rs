@@ -2,6 +2,7 @@ use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 use crate::components::Components;
+use crate::extensions::Extensions;
 use crate::external_docs::ExternalDocumentation;
 use crate::info::Info;
 use crate::paths::{PathItem, Paths};
@@ -85,6 +86,10 @@ pub struct OpenAPI {
     /// Additional external documentation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub external_docs: Option<ExternalDocumentation>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Default for OpenAPI {
@@ -99,6 +104,7 @@ impl Default for OpenAPI {
                 terms_of_service: None,
                 contact: None,
                 license: None,
+                extensions: Extensions::default(),
             },
             self_uri: None,
             json_schema_dialect: None,
@@ -109,6 +115,7 @@ impl Default for OpenAPI {
             security: None,
             tags: None,
             external_docs: None,
+            extensions: Extensions::default(),
         }
     }
 }
@@ -128,6 +135,7 @@ impl OpenAPI {
             security: None,
             tags: None,
             external_docs: None,
+            extensions: Extensions::default(),
         }
     }
 }

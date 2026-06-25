@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::callback::Callback;
 use crate::example::Example;
+use crate::extensions::Extensions;
 use crate::header::Header;
 use crate::link::Link;
 use crate::media_type::MediaType;
@@ -84,6 +85,10 @@ pub struct Components {
     /// Reusable Media Type Objects (added in OAS 3.2).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub media_types: Option<IndexMap<String, RefOr<MediaType>>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Components {
@@ -101,6 +106,7 @@ impl Components {
             callbacks: None,
             path_items: None,
             media_types: None,
+            extensions: Extensions::default(),
         }
     }
 }

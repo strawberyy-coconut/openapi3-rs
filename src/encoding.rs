@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::Extensions;
 use crate::reference::RefOr;
 
 /// An [Encoding Object](https://spec.openapis.org/oas/latest.html#encoding-object)
@@ -50,6 +51,10 @@ pub struct Encoding {
     /// Nested item encoding (3.2). Applied to `multipart/*` for streaming.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub item_encoding: Option<Box<Encoding>>,
+
+    /// Specification Extensions (`x-*` keys).
+    #[serde(flatten)]
+    pub extensions: Extensions,
 }
 
 impl Encoding {
@@ -64,6 +69,7 @@ impl Encoding {
             encoding: None,
             prefix_encoding: None,
             item_encoding: None,
+            extensions: Extensions::default(),
         }
     }
 }
