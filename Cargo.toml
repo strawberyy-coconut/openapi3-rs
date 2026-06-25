@@ -1,0 +1,27 @@
+[package]
+name = "openapi3-rs"
+version = "0.1.0"
+edition = "2024"
+description = "Strongly-typed OpenAPI 3.2 document types with serde support"
+license = "MIT OR Apache-2.0"
+keywords = ["openapi", "openapi3", "serde", "api", "specification"]
+repository = "https://github.com/example/openapi3-rs"
+
+[dependencies]
+indexmap = { version = "2", features = ["serde"] }
+jsonschema = { version = "0.46", optional = true }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+schemars = "1"
+serde_yaml = "0.9"
+
+[features]
+default = []
+validate = ["jsonschema"]
+builder = ["dep:derive_builder"]
+
+[dependencies.derive_builder]
+version = "0.20"
+optional = true
