@@ -11,7 +11,7 @@ use crate::extensions::Extensions;
 /// failures for custom or future types. Note that on serialization, `Other`
 /// produces no value (serialized as unit), so custom types currently lose fidelity
 /// on round-trip — a custom (de)serializer should be added to preserve the string.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub enum SecuritySchemeType {
     /// API key-based authentication.
     #[serde(rename = "apiKey")]
@@ -30,8 +30,24 @@ pub enum SecuritySchemeType {
     OpenIdConnect,
     /// Catch-all for custom or future security scheme types (spec §4.27.1 allows `Any`).
     /// The original string value is not preserved on deserialization.
-    #[serde(other)]
-    Other,
+    Other(String),
+}
+
+impl<'de> Deserialize<'de> for SecuritySchemeType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        Ok(match s.as_str() {
+            "apiKey" => Self::ApiKey,
+            "http" => Self::Http,
+            "mutualTLS" => Self::MutualTLS,
+            "oauth2" => Self::Oauth2,
+            "openIdConnect" => Self::OpenIdConnect,
+            other => Self::Other(other.to_owned()),
+        })
+    }
 }
 
 /// The location of an API key, as defined in §4.27.1 of the OpenAPI 3.2 spec.
@@ -253,7 +269,10 @@ pub type SecurityRequirement = IndexMap<String, Vec<String>>;
 /// ```
 pub fn security_requirement(scheme: &str, scopes: &[&str]) -> SecurityRequirement {
     let mut map = IndexMap::new();
-    map.insert(scheme.into(), scopes.iter().map(|s| s.to_string()).collect());
+    map.insert(
+        scheme.into(),
+        scopes.iter().map(|s| s.to_string()).collect(),
+    );
     map
 }
 
@@ -361,7 +380,10 @@ mod tests {
         assert_eq!(scheme.scheme_type, SecuritySchemeType::MutualTLS);
         // Serialize back and verify exact casing
         let out = serde_json::to_string(&scheme).unwrap();
-        assert!(out.contains(r#""mutualTLS""#), "expected mutualTLS in: {out}");
+        assert!(
+            out.contains(r#""mutualTLS""#),
+            "expected mutualTLS in: {out}"
+        );
     }
 
     #[test]
@@ -369,7 +391,16 @@ mod tests {
         // §4.27.1: type is `string | Any`, custom types must not fail deserialization
         let json = r#"{"type": "sso"}"#;
         let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
-        assert_eq!(scheme.scheme_type, SecuritySchemeType::Other);
+        let json = r#"{"type": "sso"}"#;
+        let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
+        assert_eq!(scheme.scheme_type, SecuritySchemeType::Other("sso".into()));
+
+        // Verify round-trip preserves the custom type
+        let out = serde_json::to_string(&scheme).unwrap();
+        assert!(
+            out.contains(r#""type":"sso""#),
+            "custom type lost in serialization: {out}"
+        );
     }
 
     #[test]
