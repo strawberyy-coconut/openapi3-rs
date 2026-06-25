@@ -62,7 +62,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         description: "A list of pets.".into(),
                         content: Some({
                             let mut c = IndexMap::new();
-                            c.insert("application/json".into(), MediaType {
+                            c.insert("application/json".into(), RefOr::Item(MediaType {
                                 schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                                     schema_data: {
                                         let mut m = serde_json::Map::new();
@@ -75,7 +75,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     ..Default::default()
                                 }))),
                                 ..Default::default()
-                            });
+                            }));
                             c
                         }),
                         ..Default::default()

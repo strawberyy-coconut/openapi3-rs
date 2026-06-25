@@ -110,7 +110,7 @@ pub struct Parameter {
     /// The key is the media type. The map MUST only contain one entry.
     /// Mutually exclusive with `schema`.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub content: Option<IndexMap<String, crate::media_type::MediaType>>,
+    pub content: Option<IndexMap<String, RefOr<crate::MediaType>>>,
 
     /// Specification Extensions (`x-*` keys).
     #[serde(flatten)]

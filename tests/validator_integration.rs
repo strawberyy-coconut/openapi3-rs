@@ -49,7 +49,7 @@ fn json_response(desc: &str, schema_ref: &str) -> Response {
         description: desc.into(),
         content: Some({
             let mut c = IndexMap::new();
-            c.insert("application/json".into(), MediaType {
+            c.insert("application/json".into(), RefOr::Item(MediaType {
                 schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                     schema_data: {
                         let mut m = JsonMap::new();
@@ -59,7 +59,7 @@ fn json_response(desc: &str, schema_ref: &str) -> Response {
                     ..Default::default()
                 }))),
                 ..Default::default()
-            });
+            }));
             c
         }),
         ..Default::default()
@@ -213,7 +213,7 @@ fn build_full_coverage() -> OpenAPI {
             required: Some(true),
             content: {
                 let mut c = IndexMap::new();
-                c.insert("application/json".into(), MediaType {
+                c.insert("application/json".into(), RefOr::Item(MediaType {
                     schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                         schema_data: {
                             let mut m = JsonMap::new();
@@ -223,7 +223,7 @@ fn build_full_coverage() -> OpenAPI {
                         ..Default::default()
                     }))),
                     ..Default::default()
-                });
+                }));
                 c
             },
             ..Default::default()
@@ -478,7 +478,7 @@ fn build_full_coverage() -> OpenAPI {
                         }),
                         content: Some({
                             let mut c = IndexMap::new();
-                            c.insert("application/json".into(), MediaType {
+                            c.insert("application/json".into(), RefOr::Item(MediaType {
                                 schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                                     schema_data: {
                                         let mut m = JsonMap::new();
@@ -490,7 +490,7 @@ fn build_full_coverage() -> OpenAPI {
                                     ..Default::default()
                                 }))),
                                 ..Default::default()
-                            });
+                            }));
                             c
                         }),
                         ..Default::default()
@@ -685,7 +685,7 @@ fn build_full_coverage() -> OpenAPI {
             request_body: Some(RefOr::Item(RequestBody {
                 content: {
                     let mut c = IndexMap::new();
-                    c.insert("application/json-patch+json".into(), MediaType {
+                    c.insert("application/json-patch+json".into(), RefOr::Item(MediaType {
                         schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                             schema_data: {
                                 let mut m = JsonMap::new();
@@ -695,7 +695,7 @@ fn build_full_coverage() -> OpenAPI {
                             ..Default::default()
                         }))),
                         ..Default::default()
-                    });
+                    }));
                     c
                 },
                 ..Default::default()
@@ -725,7 +725,7 @@ fn build_full_coverage() -> OpenAPI {
                         description: "Avatar image".into(),
                         content: Some({
                             let mut c = IndexMap::new();
-                            c.insert("image/png".into(), MediaType::default());
+                            c.insert("image/png".into(), RefOr::Item(MediaType::default()));
                             c
                         }),
                         ..Default::default()
@@ -744,7 +744,7 @@ fn build_full_coverage() -> OpenAPI {
                 required: Some(true),
                 content: {
                     let mut c = IndexMap::new();
-                    c.insert("multipart/form-data".into(), MediaType {
+                    c.insert("multipart/form-data".into(), RefOr::Item(MediaType {
                         schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                             schema_data: {
                                 let mut m = JsonMap::new();
@@ -770,7 +770,7 @@ fn build_full_coverage() -> OpenAPI {
                             e
                         }),
                         ..Default::default()
-                    });
+                    }));
                     c
                 },
                 ..Default::default()
@@ -803,7 +803,7 @@ fn build_full_coverage() -> OpenAPI {
                         description: "Stream of pets".into(),
                         content: Some({
                             let mut c = IndexMap::new();
-                            c.insert("application/jsonl".into(), MediaType {
+                            c.insert("application/jsonl".into(), RefOr::Item(MediaType {
                                 item_schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                                     schema_data: {
                                         let mut m = JsonMap::new();
@@ -813,7 +813,7 @@ fn build_full_coverage() -> OpenAPI {
                                     ..Default::default()
                                 }))),
                                 ..Default::default()
-                            });
+                            }));
                             c
                         }),
                         ..Default::default()
@@ -838,7 +838,7 @@ fn build_full_coverage() -> OpenAPI {
                     location: ParameterIn::Querystring,
                     content: Some({
                         let mut c = IndexMap::new();
-                        c.insert("application/json".into(), MediaType {
+                        c.insert("application/json".into(), RefOr::Item(MediaType {
                             schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                                 schema_data: {
                                     let mut m = JsonMap::new();
@@ -852,7 +852,7 @@ fn build_full_coverage() -> OpenAPI {
                                 ..Default::default()
                             }))),
                             ..Default::default()
-                        });
+                        }));
                         c
                     }),
                     ..Default::default()
@@ -865,7 +865,7 @@ fn build_full_coverage() -> OpenAPI {
                         description: "Search results".into(),
                         content: Some({
                             let mut c = IndexMap::new();
-                            c.insert("application/json".into(), MediaType {
+                            c.insert("application/json".into(), RefOr::Item(MediaType {
                                 schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                                     schema_data: {
                                         let mut m = JsonMap::new();
@@ -883,7 +883,7 @@ fn build_full_coverage() -> OpenAPI {
                                     ex
                                 }),
                                 ..Default::default()
-                            });
+                            }));
                             c
                         }),
                         ..Default::default()
@@ -951,7 +951,7 @@ fn build_full_coverage() -> OpenAPI {
                     request_body: Some(RefOr::Item(RequestBody {
                         content: {
                             let mut c = IndexMap::new();
-                            c.insert("application/json".into(), MediaType {
+                            c.insert("application/json".into(), RefOr::Item(MediaType {
                                 schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                                     schema_data: {
                                         let mut m = JsonMap::new();
@@ -961,7 +961,7 @@ fn build_full_coverage() -> OpenAPI {
                                     ..Default::default()
                                 }))),
                                 ..Default::default()
-                            });
+                            }));
                             c
                         },
                         ..Default::default()
@@ -1124,13 +1124,13 @@ fn roundtrip_full_coverage() {
     let stream_op = stream_path.get.as_ref().unwrap();
     let stream_body = &stream_op.responses.responses["200"].as_item().unwrap();
     let stream_content = stream_body.content.as_ref().unwrap();
-    assert!(stream_content["application/jsonl"].item_schema.is_some());
+    assert!(stream_content["application/jsonl"].as_item().unwrap().item_schema.is_some());
 
     // Multipart encoding
     let avatar_path = paths["/pets/{petId}/avatar"].as_item().unwrap();
     let upload_op = avatar_path.post.as_ref().unwrap();
     let upload_body = upload_op.request_body.as_ref().unwrap().as_item().unwrap();
-    let upload_content = &upload_body.content["multipart/form-data"];
+    let upload_content = upload_body.content["multipart/form-data"].as_item().unwrap();
     let enc = upload_content.encoding.as_ref().unwrap();
     assert!(enc.contains_key("avatar"));
     assert!(enc.contains_key("caption"));
@@ -1277,7 +1277,7 @@ fn build_petstore() -> OpenAPI {
                         description: "A paged list of pets".into(),
                         content: Some({
                             let mut c = IndexMap::new();
-                            c.insert("application/json".into(), MediaType {
+                            c.insert("application/json".into(), RefOr::Item(MediaType {
                                 schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                                     schema_data: {
                                         let mut m = JsonMap::new();
@@ -1289,7 +1289,7 @@ fn build_petstore() -> OpenAPI {
                                     ..Default::default()
                                 }))),
                                 ..Default::default()
-                            });
+                            }));
                             c
                         }),
                         ..Default::default()
@@ -1308,7 +1308,7 @@ fn build_petstore() -> OpenAPI {
                 required: Some(true),
                 content: {
                     let mut c = IndexMap::new();
-                    c.insert("application/json".into(), MediaType {
+                    c.insert("application/json".into(), RefOr::Item(MediaType {
                         schema: Some(RefOr::Item(Schema::Object(SchemaObject {
                             schema_data: {
                                 let mut m = JsonMap::new();
@@ -1318,7 +1318,7 @@ fn build_petstore() -> OpenAPI {
                             ..Default::default()
                         }))),
                         ..Default::default()
-                    });
+                    }));
                     c
                 },
                 ..Default::default()

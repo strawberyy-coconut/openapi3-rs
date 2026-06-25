@@ -39,7 +39,7 @@ pub struct Response {
     /// A map containing descriptions of potential response payloads.
     /// The key is a media type or media type range.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub content: Option<IndexMap<String, MediaType>>,
+    pub content: Option<IndexMap<String, RefOr<MediaType>>>,
 
     /// A map of operations links that can be followed from the response.
     /// The key is a short name for the link.

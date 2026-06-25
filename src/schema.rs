@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{Map as JsonMap, Value};
-use thiserror::Error;
-
 use crate::discriminator::Discriminator;
 use crate::external_docs::ExternalDocumentation;
 use crate::xml::XML;
@@ -79,7 +77,8 @@ impl Default for SchemaObject {
     }
 }
 
-#[derive(Debug, Error)]
+#[cfg(feature = "validate")]
+#[derive(Debug, thiserror::Error)]
 pub enum NewValidatedError {
     #[error("Validation error: {0}")]
     ValidationError(#[from] jsonschema::ValidationError<'static>),
@@ -114,6 +113,7 @@ impl Schema {
         }
     }
 
+    #[cfg(feature = "validate")]
     pub fn new_validated(value: Value) -> Result<Self, NewValidatedError> {
         // First validate the schema itself is valid JSON Schema
         let _ = jsonschema::validator_for(&value)?;

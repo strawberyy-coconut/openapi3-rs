@@ -26,7 +26,7 @@ pub struct RequestBody {
 
     /// **REQUIRED.** The content of the request body. Maps media types to their
     /// descriptions. The map SHOULD have at least one entry.
-    pub content: IndexMap<String, MediaType>,
+    pub content: IndexMap<String, RefOr<MediaType>>,
 
     /// Whether the request body is required in the request. Default is `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -39,7 +39,7 @@ pub struct RequestBody {
 
 impl RequestBody {
     /// Create a new RequestBody with the given content.
-    pub fn new(content: IndexMap<String, MediaType>) -> Self {
+    pub fn new(content: IndexMap<String, RefOr<MediaType>>) -> Self {
         Self {
             content,
             description: None,
