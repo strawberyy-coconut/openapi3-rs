@@ -103,6 +103,217 @@ impl SchemaObject {
     pub fn description(&self) -> Option<&str> {
         self.schema_data.get("description").and_then(|v| v.as_str())
     }
+
+    // ── Compound keywords ──────────────────────────────────────────
+
+    /// Returns the `properties` map, if present.
+    pub fn properties(&self) -> Option<&JsonMap<String, Value>> {
+        self.schema_data.get("properties")?.as_object()
+    }
+
+    /// Returns the `items` subschema, if present.
+    pub fn items(&self) -> Option<&Value> {
+        self.schema_data.get("items")
+    }
+
+    /// Returns the `additionalProperties` value, if present.
+    /// Can be a boolean (`true`/`false`) or a Schema Object.
+    pub fn additional_properties(&self) -> Option<&Value> {
+        self.schema_data.get("additionalProperties")
+    }
+
+    /// Returns the `oneOf` array, if present.
+    pub fn one_of(&self) -> Option<&Vec<Value>> {
+        self.schema_data.get("oneOf")?.as_array()
+    }
+
+    /// Returns the `allOf` array, if present.
+    pub fn all_of(&self) -> Option<&Vec<Value>> {
+        self.schema_data.get("allOf")?.as_array()
+    }
+
+    /// Returns the `anyOf` array, if present.
+    pub fn any_of(&self) -> Option<&Vec<Value>> {
+        self.schema_data.get("anyOf")?.as_array()
+    }
+
+    /// Returns the `prefixItems` array, if present (JSON Schema 2020-12).
+    pub fn prefix_items(&self) -> Option<&Vec<Value>> {
+        self.schema_data.get("prefixItems")?.as_array()
+    }
+
+    /// Returns the `required` array as string slices, if present.
+    pub fn required(&self) -> Option<Vec<&str>> {
+        self.schema_data.get("required")?
+            .as_array()?
+            .iter()
+            .map(|v| v.as_str())
+            .collect()
+    }
+
+    /// Returns the `enum` array, if present.
+    pub fn enum_values(&self) -> Option<&Vec<Value>> {
+        self.schema_data.get("enum")?.as_array()
+    }
+
+    /// Returns the `const` value, if present.
+    pub fn const_value(&self) -> Option<&Value> {
+        self.schema_data.get("const")
+    }
+
+    /// Returns the `examples` array (JSON Schema 2020-12 plural form), if present.
+    pub fn examples(&self) -> Option<&Vec<Value>> {
+        self.schema_data.get("examples")?.as_array()
+    }
+
+    /// Returns true if `nullable: true` is set (pre-2020-12 compatibility).
+    pub fn is_nullable(&self) -> bool {
+        self.schema_data
+            .get("nullable")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false)
+    }
+
+    /// Returns `true` if `readOnly: true` is set.
+    pub fn is_read_only(&self) -> bool {
+        self.schema_data
+            .get("readOnly")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false)
+    }
+
+    /// Returns `true` if `writeOnly: true` is set.
+    pub fn is_write_only(&self) -> bool {
+        self.schema_data
+            .get("writeOnly")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false)
+    }
+
+    // ── Numeric constraint keywords ─────────────────────────────────
+
+    /// Returns the `minimum` value, if present.
+    pub fn minimum(&self) -> Option<f64> {
+        self.schema_data.get("minimum")?.as_f64()
+    }
+
+    /// Returns the `maximum` value, if present.
+    pub fn maximum(&self) -> Option<f64> {
+        self.schema_data.get("maximum")?.as_f64()
+    }
+
+    /// Returns the `exclusiveMinimum` value, if present.
+    pub fn exclusive_minimum(&self) -> Option<f64> {
+        self.schema_data.get("exclusiveMinimum")?.as_f64()
+    }
+
+    /// Returns the `exclusiveMaximum` value, if present.
+    pub fn exclusive_maximum(&self) -> Option<f64> {
+        self.schema_data.get("exclusiveMaximum")?.as_f64()
+    }
+
+    /// Returns the `multipleOf` value, if present.
+    pub fn multiple_of(&self) -> Option<f64> {
+        self.schema_data.get("multipleOf")?.as_f64()
+    }
+
+    // ── String constraint keywords ──────────────────────────────────
+
+    /// Returns the `minLength` value, if present.
+    pub fn min_length(&self) -> Option<u64> {
+        self.schema_data.get("minLength")?.as_u64()
+    }
+
+    /// Returns the `maxLength` value, if present.
+    pub fn max_length(&self) -> Option<u64> {
+        self.schema_data.get("maxLength")?.as_u64()
+    }
+
+    /// Returns the `pattern` value, if present.
+    pub fn pattern(&self) -> Option<&str> {
+        self.schema_data.get("pattern")?.as_str()
+    }
+
+    /// Returns the `contentMediaType` value, if present.
+    pub fn content_media_type(&self) -> Option<&str> {
+        self.schema_data.get("contentMediaType")?.as_str()
+    }
+
+    /// Returns the `contentEncoding` value, if present.
+    pub fn content_encoding(&self) -> Option<&str> {
+        self.schema_data.get("contentEncoding")?.as_str()
+    }
+
+    // ── Array constraint keywords ───────────────────────────────────
+
+    /// Returns the `minItems` value, if present.
+    pub fn min_items(&self) -> Option<u64> {
+        self.schema_data.get("minItems")?.as_u64()
+    }
+
+    /// Returns the `maxItems` value, if present.
+    pub fn max_items(&self) -> Option<u64> {
+        self.schema_data.get("maxItems")?.as_u64()
+    }
+
+    /// Returns `true` if `uniqueItems: true` is set.
+    pub fn has_unique_items(&self) -> bool {
+        self.schema_data
+            .get("uniqueItems")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false)
+    }
+
+    // ── Object constraint keywords ──────────────────────────────────
+
+    /// Returns the `minProperties` value, if present.
+    pub fn min_properties(&self) -> Option<u64> {
+        self.schema_data.get("minProperties")?.as_u64()
+    }
+
+    /// Returns the `maxProperties` value, if present.
+    pub fn max_properties(&self) -> Option<u64> {
+        self.schema_data.get("maxProperties")?.as_u64()
+    }
+
+    // ── Meta keywords ───────────────────────────────────────────────
+
+    /// Returns the `title` keyword value, if present.
+    pub fn title(&self) -> Option<&str> {
+        self.schema_data.get("title")?.as_str()
+    }
+
+    /// Returns the `default` keyword value, if present.
+    pub fn default(&self) -> Option<&Value> {
+        self.schema_data.get("default")
+    }
+
+    /// Returns the `$id` value, if present.
+    pub fn id(&self) -> Option<&str> {
+        self.schema_data.get("$id")?.as_str()
+    }
+
+    /// Returns true if `deprecated: true` is set (JSON Schema 2020-12).
+    pub fn is_deprecated(&self) -> bool {
+        self.schema_data
+            .get("deprecated")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false)
+    }
+
+    // ── Mutable access for programmatic construction ────────────────
+
+    /// Insert a raw JSON Schema keyword into `schema_data`.
+    ///
+    /// The key should use the JSON Schema field name (e.g., `"minLength"`, `"oneOf"`).
+    pub fn insert_keyword(&mut self, key: impl Into<String>, value: Value) -> Option<Value> {
+        self.schema_data.insert(key.into(), value)
+    }
+
+    /// Returns a mutable reference to `schema_data` for direct manipulation.
+    pub fn schema_data_mut(&mut self) -> &mut JsonMap<String, Value> {
+        &mut self.schema_data
+    }
 }
 
 impl Default for SchemaObject {
