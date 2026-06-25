@@ -43,7 +43,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 },
                 ..Default::default()
             }))),
-            ..Default::default()
+            description: None,
+            deprecated: None,
+            allow_empty_value: None,
+            style: None,
+            explode: None,
+            allow_reserved: None,
+            example: None,
+            examples: None,
+            content: None,
+            extensions: Extensions::default(),
         }),
         // Parameter defined via reference
         RefOr::Ref(Reference::new("#/components/parameters/OffsetParam")),
@@ -65,12 +74,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // -- Responses with mixed inline/$ref ------------------------------------
-    let mut responses = Responses::default();
+    let mut responses = Responses::new();
     responses.responses.insert(
         "200".into(),
         RefOr::Item(Response {
             description: "OK".into(),
-            ..Default::default()
+            summary: None,
+            headers: None,
+            content: None,
+            links: None,
+            extensions: Extensions::default(),
         }),
     );
     responses.responses.insert(

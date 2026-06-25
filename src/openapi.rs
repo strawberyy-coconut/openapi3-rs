@@ -94,19 +94,12 @@ pub struct OpenAPI {
 }
 
 impl Default for OpenAPI {
+    /// Creates a minimal OpenAPI with empty version and info.
+    /// Prefer [`OpenAPI::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             openapi: String::new(),
-            info: Info {
-                title: String::new(),
-                version: String::new(),
-                summary: None,
-                description: None,
-                terms_of_service: None,
-                contact: None,
-                license: None,
-                extensions: Extensions::default(),
-            },
+            info: Info::default(),
             self_uri: None,
             json_schema_dialect: None,
             servers: None,

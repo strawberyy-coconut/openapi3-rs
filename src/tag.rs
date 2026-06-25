@@ -54,6 +54,8 @@ pub struct Tag {
 }
 
 impl Default for Tag {
+    /// Creates a minimal Tag with empty name.
+    /// Prefer [`Tag::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             name: String::new(),

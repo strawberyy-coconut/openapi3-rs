@@ -27,6 +27,18 @@ pub struct ExternalDocumentation {
     pub extensions: Extensions,
 }
 
+impl Default for ExternalDocumentation {
+    /// Creates a minimal ExternalDocumentation with empty URL.
+    /// Prefer [`ExternalDocumentation::new`] for specification-compliant construction.
+    fn default() -> Self {
+        Self {
+            url: String::new(),
+            description: None,
+            extensions: Extensions::default(),
+        }
+    }
+}
+
 impl ExternalDocumentation {
     /// Create a new ExternalDocumentation with the given URL.
     pub fn new(url: impl Into<String>) -> Self {
@@ -38,12 +50,4 @@ impl ExternalDocumentation {
     }
 }
 
-impl Default for ExternalDocumentation {
-    fn default() -> Self {
-        Self {
-            url: String::new(),
-            description: None,
-            extensions: Extensions::default(),
-        }
-    }
-}
+

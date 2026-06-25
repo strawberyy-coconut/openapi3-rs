@@ -52,6 +52,8 @@ pub struct Response {
 }
 
 impl Default for Response {
+    /// Creates a minimal Response with empty description.
+    /// Prefer [`Response::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             description: String::new(),
@@ -109,6 +111,17 @@ pub struct Responses {
     pub responses: IndexMap<String, RefOr<Response>>,
 }
 
+impl Default for Responses {
+    /// Creates an empty Responses object.
+    /// Build up with `.responses.insert(...)` before use.
+    fn default() -> Self {
+        Self {
+            default: None,
+            responses: IndexMap::new(),
+        }
+    }
+}
+
 impl Responses {
     /// Create a new empty Responses object.
     pub fn new() -> Self {
@@ -119,11 +132,6 @@ impl Responses {
     }
 }
 
-impl Default for Responses {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 #[cfg(test)]
 mod tests {

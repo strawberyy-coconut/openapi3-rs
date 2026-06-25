@@ -51,6 +51,8 @@ impl Discriminator {
 }
 
 impl Default for Discriminator {
+    /// Creates a minimal Discriminator with empty property_name.
+    /// Prefer [`Discriminator::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             property_name: String::new(),

@@ -93,6 +93,8 @@ impl Info {
 }
 
 impl Default for Info {
+    /// Creates a minimal Info with empty title and version.
+    /// Prefer [`Info::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             title: String::new(),

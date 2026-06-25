@@ -62,7 +62,10 @@ fn json_response(desc: &str, schema_ref: &str) -> Response {
             }));
             c
         }),
-        ..Default::default()
+        summary: None,
+        headers: None,
+        links: None,
+        extensions: Extensions::default(),
     }
 }
 

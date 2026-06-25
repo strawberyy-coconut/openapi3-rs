@@ -54,10 +54,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         },
                         ..Default::default()
                     }))),
-                    ..Default::default()
+                    description: None,
+                    required: None,
+                    deprecated: None,
+                    allow_empty_value: None,
+                    style: None,
+                    explode: None,
+                    allow_reserved: None,
+                    example: None,
+                    examples: None,
+                    content: None,
+                    extensions: Extensions::default(),
                 })]),
                 responses: {
-                    let mut r = Responses::default();
+                    let mut r = Responses::new();
                     r.responses.insert("200".into(), RefOr::Item(Response {
                         description: "A list of pets.".into(),
                         content: Some({
@@ -78,11 +88,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             }));
                             c
                         }),
-                        ..Default::default()
+                        summary: None,
+                        headers: None,
+                        links: None,
+                        extensions: Extensions::default(),
                     }));
                     r
                 },
-                ..Default::default()
+                tags: None,
+                description: None,
+                external_docs: None,
+                request_body: None,
+                callbacks: None,
+                deprecated: None,
+                security: None,
+                servers: None,
+                extensions: Extensions::default(),
             }),
             ..Default::default()
         }),
@@ -101,26 +122,35 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 name: Some("API Support".into()),
                 url: None,
                 email: Some("support@example.com".into()),
-                ..Default::default()
+                extensions: Extensions::default(),
             }),
             license: Some(License {
                 name: "Apache 2.0".into(),
                 identifier: None,
                 url: Some("https://www.apache.org/licenses/LICENSE-2.0.html".into()),
-                ..Default::default()
+                extensions: Extensions::default(),
             }),
-            ..Default::default()
+            extensions: Extensions::default(),
         },
         servers: Some(vec![Server {
             url: "https://api.example.com/v1".into(),
-            ..Default::default()
+            description: None,
+            name: None,
+            variables: None,
+            extensions: Extensions::default(),
         }]),
         paths: Some(paths),
         components: Some(Components {
             schemas: Some(schemas),
             ..Default::default()
         }),
-        ..Default::default()
+        self_uri: None,
+        json_schema_dialect: None,
+        webhooks: None,
+        security: None,
+        tags: None,
+        external_docs: None,
+        extensions: Extensions::default(),
     };
 
     // -- Serialize to JSON ---------------------------------------------------

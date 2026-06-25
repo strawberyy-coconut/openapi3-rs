@@ -40,6 +40,8 @@ pub struct Server {
 }
 
 impl Default for Server {
+    /// Creates a minimal Server with empty URL.
+    /// Prefer [`Server::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             url: String::new(),
@@ -113,6 +115,8 @@ impl ServerVariable {
 }
 
 impl Default for ServerVariable {
+    /// Creates a minimal ServerVariable with empty default.
+    /// Prefer [`ServerVariable::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             default: String::new(),

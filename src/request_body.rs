@@ -50,6 +50,8 @@ impl RequestBody {
 }
 
 impl Default for RequestBody {
+    /// Creates a minimal RequestBody with empty content.
+    /// Prefer [`RequestBody::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             description: None,

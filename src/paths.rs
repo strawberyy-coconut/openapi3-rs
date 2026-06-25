@@ -276,7 +276,11 @@ pub struct Operation {
     pub extensions: Extensions,
 }
 
+
+
 impl Default for Operation {
+    /// Creates a minimal Operation with empty responses.
+    /// Prefer [`Operation::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             responses: Responses::default(),

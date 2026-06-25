@@ -11,26 +11,37 @@ use crate::extensions::Extensions;
 /// failures for custom or future types. Note that on serialization, `Other`
 /// produces no value (serialized as unit), so custom types currently lose fidelity
 /// on round-trip — a custom (de)serializer should be added to preserve the string.
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SecuritySchemeType {
     /// API key-based authentication.
-    #[serde(rename = "apiKey")]
     ApiKey,
     /// HTTP authentication (e.g., Basic, Bearer).
-    #[serde(rename = "http")]
     Http,
     /// Mutual TLS certificate authentication. Note: the spec capitalizes TLS.
-    #[serde(rename = "mutualTLS")]
     MutualTLS,
     /// OAuth 2.0 authentication.
-    #[serde(rename = "oauth2")]
     Oauth2,
     /// OpenID Connect authentication.
-    #[serde(rename = "openIdConnect")]
     OpenIdConnect,
     /// Catch-all for custom or future security scheme types (spec §4.27.1 allows `Any`).
-    /// The original string value is not preserved on deserialization.
+    /// Stores the original string value, preserved on round-trip.
     Other(String),
+}
+
+impl Serialize for SecuritySchemeType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            Self::ApiKey => serializer.serialize_str("apiKey"),
+            Self::Http => serializer.serialize_str("http"),
+            Self::MutualTLS => serializer.serialize_str("mutualTLS"),
+            Self::Oauth2 => serializer.serialize_str("oauth2"),
+            Self::OpenIdConnect => serializer.serialize_str("openIdConnect"),
+            Self::Other(s) => serializer.serialize_str(s),
+        }
+    }
 }
 
 impl<'de> Deserialize<'de> for SecuritySchemeType {
@@ -124,6 +135,8 @@ pub struct SecurityScheme {
 }
 
 impl Default for SecurityScheme {
+    /// Creates a minimal SecurityScheme with `ApiKey` type.
+    /// Prefer using explicit constructors for specification-compliant values.
     fn default() -> Self {
         Self {
             scheme_type: SecuritySchemeType::ApiKey,
@@ -389,8 +402,6 @@ mod tests {
     #[test]
     fn test_security_scheme_type_other_fallback() {
         // §4.27.1: type is `string | Any`, custom types must not fail deserialization
-        let json = r#"{"type": "sso"}"#;
-        let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
         let json = r#"{"type": "sso"}"#;
         let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
         assert_eq!(scheme.scheme_type, SecuritySchemeType::Other("sso".into()));

@@ -140,6 +140,8 @@ impl Parameter {
 }
 
 impl Default for Parameter {
+    /// Creates a minimal Parameter with empty name and `Query` location.
+    /// Prefer [`Parameter::new`] for specification-compliant construction.
     fn default() -> Self {
         Self {
             name: String::new(),
