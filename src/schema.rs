@@ -80,7 +80,7 @@ impl Default for SchemaObject {
 }
 
 #[derive(Debug, Error)]
-enum NewValidatedError {
+pub enum NewValidatedError {
     #[error("Validation error: {0}")]
     ValidationError(#[from] jsonschema::ValidationError<'static>),
     #[error("Serde error: {0}")]
