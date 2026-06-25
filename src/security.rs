@@ -244,6 +244,31 @@ impl Default for OAuthFlow {
 /// An empty Security Requirement Object (`{}`) indicates anonymous access.
 pub type SecurityRequirement = IndexMap<String, Vec<String>>;
 
+/// Create a [`SecurityRequirement`] from a scheme name and optional scopes.
+///
+/// ```
+/// use openapi3_rs::security_requirement;
+/// let req = security_requirement("petstore_auth", &["write:pets", "read:pets"]);
+/// assert_eq!(req.get("petstore_auth").unwrap(), &vec!["write:pets", "read:pets"]);
+/// ```
+pub fn security_requirement(scheme: &str, scopes: &[&str]) -> SecurityRequirement {
+    let mut map = IndexMap::new();
+    map.insert(scheme.into(), scopes.iter().map(|s| s.to_string()).collect());
+    map
+}
+
+/// Create an empty [`SecurityRequirement`] indicating anonymous access is
+/// supported (spec §4.30: `{}`).
+///
+/// ```
+/// use openapi3_rs::anonymous_security;
+/// let req = anonymous_security();
+/// assert!(req.is_empty());
+/// ```
+pub fn anonymous_security() -> SecurityRequirement {
+    IndexMap::new()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -299,6 +324,33 @@ mod tests {
         let json = r#"{}"#;
         let req: SecurityRequirement = serde_json::from_str(json).unwrap();
         assert!(req.is_empty());
+    }
+
+    #[test]
+    fn test_oauth2_metadata_url() {
+        // §4.27.1: oauth2MetadataUrl added in OAS 3.2
+        let json = r#"{"type": "oauth2", "oauth2MetadataUrl": "https://example.com/.well-known/oauth-authorization-server"}"#;
+        let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            scheme.oauth2_metadata_url.as_deref(),
+            Some("https://example.com/.well-known/oauth-authorization-server")
+        );
+    }
+
+    #[test]
+    fn test_device_authorization_flow() {
+        // §4.29.1: deviceAuthorization added in OAS 3.2
+        let json = r#"{
+            "authorizationUrl": "https://example.com/oauth/authorize",
+            "tokenUrl": "https://example.com/oauth/token",
+            "deviceAuthorizationUrl": "https://example.com/oauth/device",
+            "scopes": {"read": "Read access"}
+        }"#;
+        let flow: OAuthFlow = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            flow.device_authorization_url.as_deref(),
+            Some("https://example.com/oauth/device")
+        );
     }
 
     #[test]

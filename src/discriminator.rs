@@ -60,3 +60,36 @@ impl Default for Discriminator {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_discriminator_default() {
+        let json = r#"{"propertyName": "petType"}"#;
+        let disc: Discriminator = serde_json::from_str(json).unwrap();
+        assert_eq!(disc.property_name, "petType");
+        assert!(disc.mapping.is_none());
+        assert!(disc.default_mapping.is_none());
+    }
+
+    #[test]
+    fn test_discriminator_with_default_mapping() {
+        // §4.25.1: defaultMapping specifies the schema when the discriminating
+        // property is absent or contains an unmapped value (OAS 3.2)
+        let json = r#"{"propertyName": "petType", "defaultMapping": "OtherPet"}"#;
+        let disc: Discriminator = serde_json::from_str(json).unwrap();
+        assert_eq!(disc.default_mapping.as_deref(), Some("OtherPet"));
+    }
+
+    #[test]
+    fn test_discriminator_roundtrip() {
+        let json = r#"{"propertyName": "petType", "mapping": {"dog": "Dog"}, "defaultMapping": "OtherPet"}"#;
+        let disc: Discriminator = serde_json::from_str(json).unwrap();
+        let output = serde_json::to_string(&disc).unwrap();
+        let back: Discriminator = serde_json::from_str(&output).unwrap();
+        assert_eq!(back.property_name, "petType");
+        assert_eq!(back.default_mapping.as_deref(), Some("OtherPet"));
+    }
+}

@@ -68,7 +68,7 @@ pub use response::{Response, Responses};
 pub use schema::{Schema, SchemaObject};
 pub use security::{
     ApiKeyLocation, OAuthFlow, OAuthFlows, SecurityRequirement, SecurityScheme,
-    SecuritySchemeType,
+    SecuritySchemeType, anonymous_security, security_requirement,
 };
 pub use server::{Server, ServerVariable};
 pub use tag::Tag;

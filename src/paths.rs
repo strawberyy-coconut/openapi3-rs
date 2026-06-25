@@ -164,6 +164,26 @@ impl PathItem {
         }
         ops
     }
+
+    /// Returns all operations defined on this path item, with mutable access.
+    pub fn operations_mut(&mut self) -> Vec<(&str, &mut Operation)> {
+        let mut ops = Vec::new();
+        if let Some(op) = &mut self.get { ops.push(("get", op)); }
+        if let Some(op) = &mut self.put { ops.push(("put", op)); }
+        if let Some(op) = &mut self.post { ops.push(("post", op)); }
+        if let Some(op) = &mut self.delete { ops.push(("delete", op)); }
+        if let Some(op) = &mut self.options { ops.push(("options", op)); }
+        if let Some(op) = &mut self.head { ops.push(("head", op)); }
+        if let Some(op) = &mut self.patch { ops.push(("patch", op)); }
+        if let Some(op) = &mut self.trace { ops.push(("trace", op)); }
+        if let Some(op) = &mut self.query { ops.push(("query", op)); }
+        if let Some(additional) = &mut self.additional_operations {
+            for (method, op) in additional {
+                ops.push((method.as_str(), op));
+            }
+        }
+        ops
+    }
 }
 
 impl Default for PathItem {

@@ -54,13 +54,28 @@ pub struct SchemaObject {
     pub external_docs: Option<ExternalDocumentation>,
 
     /// A free-form field to include an example of an instance for this schema.
-    /// **Deprecated** in favor of the JSON Schema `examples` keyword.
+    ///
+    /// **Deprecated** as of OAS 3.1 / JSON Schema 2020-12 in favor of the
+    /// JSON Schema `examples` (plural) keyword. Use [`SchemaObject::examples`]
+    /// to access the new keyword, or embed examples directly in `schema_data`.
+    /// See [spec §4.24.2](https://spec.openapis.org/oas/latest.html#schema-object).
+    #[deprecated(
+        since = "0.1.0",
+        note = "Use the JSON Schema `examples` (plural) keyword instead (OAS §4.24.2)"
+    )]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub example: Option<Value>,
 
     /// All JSON Schema keywords (`type`, `properties`, `items`, `oneOf`, `allOf`,
     /// `$ref`, `$schema`, `$id`, etc.) are captured here as a raw JSON object.
     /// Keys recognized as OAS fields above are excluded from this map.
+    ///
+    /// Note: the JSON Schema `$ref` keyword lives in `schema_data`. This is
+    /// distinct from the OAS [Reference Object](https://spec.openapis.org/oas/latest.html#reference-object)
+    /// (used by [`RefOr<T>`](crate::RefOr)), which *only* has `$ref`, `summary`,
+    /// and `description` and cannot contain other JSON Schema keywords alongside
+    /// `$ref`.  A Schema Object with `$ref` plus other keywords (like
+    /// `description`) stores `$ref` here in `schema_data`.
     #[serde(flatten)]
     pub schema_data: JsonMap<String, Value>,
 }
@@ -316,7 +331,47 @@ impl SchemaObject {
     }
 }
 
+impl SchemaObject {
+    /// Create a new empty SchemaObject (no type, no constraints).
+    pub fn new() -> Self {
+        <Self as Default>::default()
+    }
+
+    /// Create a SchemaObject with the given JSON Schema `type`.
+    ///
+    /// ```
+    /// use openapi3_rs::SchemaObject;
+    /// let obj = SchemaObject::with_type("string");
+    /// assert_eq!(obj.schema_type(), Some("string"));
+    /// ```
+    pub fn with_type(typ: impl Into<String>) -> Self {
+        let mut data = JsonMap::new();
+        data.insert("type".into(), Value::String(typ.into()));
+        Self {
+            schema_data: data,
+            ..<Self as Default>::default()
+        }
+    }
+
+    /// Create a SchemaObject that references another schema via `$ref`.
+    ///
+    /// ```
+    /// use openapi3_rs::SchemaObject;
+    /// let obj = SchemaObject::with_ref("#/components/schemas/Pet");
+    /// assert_eq!(obj.ref_path(), Some("#/components/schemas/Pet"));
+    /// ```
+    pub fn with_ref(ref_path: impl Into<String>) -> Self {
+        let mut data = JsonMap::new();
+        data.insert("$ref".into(), Value::String(ref_path.into()));
+        Self {
+            schema_data: data,
+            ..<Self as Default>::default()
+        }
+    }
+}
+
 impl Default for SchemaObject {
+    #[allow(deprecated)]
     fn default() -> Self {
         Self {
             discriminator: None,

@@ -87,6 +87,15 @@ impl Response {
 ///
 /// Response codes can be exact (`200`) or wildcard ranges (`2XX`). The keys
 /// are strings (not integers) for JSON/YAML compatibility.
+///
+/// # Serde flatten behavior
+///
+/// The `default` field is a named fixed field (§4.16.1), while `responses` holds
+/// patterned fields (§4.16.2). The `#[serde(flatten)]` on `responses` works
+/// correctly because serde extracts the known `"default"` key first and places
+/// all other keys into the map. There is no collision risk — the spec's patterned
+/// fields are HTTP status codes (e.g., `"200"`, `"2XX"`), none of which equal
+/// the literal string `"default"`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Responses {
     /// The documentation of responses other than the ones declared for specific
@@ -151,5 +160,29 @@ mod tests {
         let responses: Responses = serde_json::from_str(json).unwrap();
         assert_eq!(responses.responses.len(), 2);
         assert!(responses.default.is_some());
+        // Verify `default` was NOT placed into the responses map
+        assert!(!responses.responses.contains_key("default"));
+    }
+
+    #[test]
+    fn test_responses_roundtrip() {
+        // Verify that `default` + patterned fields round-trip correctly
+        // without collision between the named field and the flattened map
+        let json = r#"{
+            "200": {"description": "OK"},
+            "default": {"description": "Error"},
+            "2XX": {"description": "Success range"}
+        }"#;
+        let responses: Responses = serde_json::from_str(json).unwrap();
+        assert_eq!(responses.responses.len(), 2);
+        assert!(responses.default.is_some());
+        assert!(responses.responses.contains_key("200"));
+        assert!(responses.responses.contains_key("2XX"));
+        assert!(!responses.responses.contains_key("default"));
+
+        let output = serde_json::to_string(&responses).unwrap();
+        let roundtripped: Responses = serde_json::from_str(&output).unwrap();
+        assert_eq!(roundtripped.responses.len(), 2);
+        assert!(roundtripped.default.is_some());
     }
 }
