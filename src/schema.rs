@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{Map as JsonMap, Value};
+use thiserror::Error;
 
 use crate::discriminator::Discriminator;
 use crate::external_docs::ExternalDocumentation;
@@ -78,6 +79,14 @@ impl Default for SchemaObject {
     }
 }
 
+#[derive(Debug, Error)]
+enum NewValidatedError {
+    #[error("Validation error: {0}")]
+    ValidationError(#[from] jsonschema::ValidationError<'static>),
+    #[error("Serde error: {0}")]
+    SerdeError(#[from] serde_json::Error)
+}
+
 impl Schema {
     /// Returns `true` if this is a boolean schema.
     pub fn is_bool(&self) -> bool {
@@ -103,6 +112,14 @@ impl Schema {
             Self::Bool(b) => Some(*b),
             Self::Object(_) => None,
         }
+    }
+
+    pub fn new_validated(value: Value) -> Result<Self, NewValidatedError> {
+        // First validate the schema itself is valid JSON Schema
+        let _ = jsonschema::validator_for(&value)?;
+        // Then deserialize
+        let schema: Self = serde_json::from_value(value)?;
+        Ok(schema)
     }
 
     /// Create a Schema from a raw JSON value (object or bool).
