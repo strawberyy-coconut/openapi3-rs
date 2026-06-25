@@ -5,19 +5,33 @@ use crate::extensions::Extensions;
 
 /// The type of a [Security Scheme Object](https://spec.openapis.org/oas/latest.html#security-scheme-object)
 /// as defined in §4.27.1 of the OpenAPI 3.2 specification.
+///
+/// The spec defines `type` as `string | Any`. The `Other` variant catches any
+/// security scheme type not in the standard set, preventing deserialization
+/// failures for custom or future types. Note that on serialization, `Other`
+/// produces no value (serialized as unit), so custom types currently lose fidelity
+/// on round-trip — a custom (de)serializer should be added to preserve the string.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
 pub enum SecuritySchemeType {
     /// API key-based authentication.
+    #[serde(rename = "apiKey")]
     ApiKey,
     /// HTTP authentication (e.g., Basic, Bearer).
+    #[serde(rename = "http")]
     Http,
-    /// Mutual TLS certificate authentication.
+    /// Mutual TLS certificate authentication. Note: the spec capitalizes TLS.
+    #[serde(rename = "mutualTLS")]
     MutualTLS,
     /// OAuth 2.0 authentication.
+    #[serde(rename = "oauth2")]
     Oauth2,
     /// OpenID Connect authentication.
+    #[serde(rename = "openIdConnect")]
     OpenIdConnect,
+    /// Catch-all for custom or future security scheme types (spec §4.27.1 allows `Any`).
+    /// The original string value is not preserved on deserialization.
+    #[serde(other)]
+    Other,
 }
 
 /// The location of an API key, as defined in §4.27.1 of the OpenAPI 3.2 spec.
@@ -285,5 +299,40 @@ mod tests {
         let json = r#"{}"#;
         let req: SecurityRequirement = serde_json::from_str(json).unwrap();
         assert!(req.is_empty());
+    }
+
+    #[test]
+    fn test_mutual_tls_casing() {
+        // §4.27.1: the type must be "mutualTLS" (note capital TLS)
+        let json = r#"{"type": "mutualTLS"}"#;
+        let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
+        assert_eq!(scheme.scheme_type, SecuritySchemeType::MutualTLS);
+        // Serialize back and verify exact casing
+        let out = serde_json::to_string(&scheme).unwrap();
+        assert!(out.contains(r#""mutualTLS""#), "expected mutualTLS in: {out}");
+    }
+
+    #[test]
+    fn test_security_scheme_type_other_fallback() {
+        // §4.27.1: type is `string | Any`, custom types must not fail deserialization
+        let json = r#"{"type": "sso"}"#;
+        let scheme: SecurityScheme = serde_json::from_str(json).unwrap();
+        assert_eq!(scheme.scheme_type, SecuritySchemeType::Other);
+    }
+
+    #[test]
+    fn test_security_scheme_type_roundtrip() {
+        for (typ, json_str) in [
+            (SecuritySchemeType::ApiKey, r#""apiKey""#),
+            (SecuritySchemeType::Http, r#""http""#),
+            (SecuritySchemeType::MutualTLS, r#""mutualTLS""#),
+            (SecuritySchemeType::Oauth2, r#""oauth2""#),
+            (SecuritySchemeType::OpenIdConnect, r#""openIdConnect""#),
+        ] {
+            let s = serde_json::to_string(&typ).unwrap();
+            assert_eq!(s, json_str);
+            let back: SecuritySchemeType = serde_json::from_str(&s).unwrap();
+            assert_eq!(back, typ);
+        }
     }
 }
